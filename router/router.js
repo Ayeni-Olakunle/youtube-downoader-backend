@@ -40,7 +40,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
     }
 
     const info = await ytdl.getInfo(videoURL);
-    const videoFormat = ytdl.chooseFormat(info.formats, { quality: "248" });
+    const videoFormat = ytdl.chooseFormat(info.formats, { quality: "136" });
     const audioFormat = ytdl.chooseFormat(info.formats, { quality: "140" });
 
     if (!videoFormat || !audioFormat) {
