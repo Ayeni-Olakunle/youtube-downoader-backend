@@ -20,7 +20,9 @@
     "fluent-ffmpeg": "^2.1.3",
     "https-proxy-agent": "^5.0.1",
     "mongoose": "^8.8.0",
+    "nayan-media-downloader": "^2.6.4",
     "nodemon": "^3.1.7",
+    "youtube-dl-exec": "^3.0.10",
     "ytdl-core": "^4.11.5"
   }
 }
