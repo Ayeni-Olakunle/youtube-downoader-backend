@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "@distube/ytdl-core": "^4.15.1",
+    "child_process": "^1.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
@@ -21,7 +22,9 @@
     "https-proxy-agent": "^5.0.1",
     "mongoose": "^8.8.0",
     "nayan-media-downloader": "^2.6.4",
+    "nayan-video-downloader": "^0.0.8",
     "nodemon": "^3.1.7",
+    "w-dwload-dlp": "^1.0.5",
     "youtube-dl-exec": "^3.0.10",
     "ytdl-core": "^4.11.5"
   }

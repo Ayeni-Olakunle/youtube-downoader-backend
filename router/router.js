@@ -2,69 +2,230 @@ const express = require("express");
 let router = express.Router();
 const fs = require("fs");
 const path = require("path");
-// const ytdl = require("@distube/ytdl-core");
-// const ytdl = require("ytdl-core");
-const ytdl = require('@distube/ytdl-core');
-const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
-const HttpsProxyAgent = require("https-proxy-agent");
-const proxy = "http://168.63.76.32:3128";
-const { exec } = require('child_process');
-const youtubedl = require('youtube-dl-exec').raw;
+// const {
+//   instagram,
+//   tikdown,
+//   twitterdown,
+//   fbdown2,
+//   GDLink,
+//   ytdown,
+//   pintarest,
+// } = require("nayan-video-downloader");
+const {
+  instagram,
+  tikdown,
+  twitterdown,
+  fbdown2,
+  GDLink,
+  ytdown,
+  pintarest,
+} = require("nayan-media-downloader");
 
-const { ytdown } = require('nayan-media-downloader');
+// router.route("/download/pinterest").get(async (req, res) => {
+//   const { url } = req.query;
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+//   if (!url) {
+//     return res.status(400).send("Please provide a valid YouTube URL");
+//   }
 
+//   try {
+//     const video = await pintarest(url, {
+//       format: "mp4",
+//       quality: "quality",
+//     });
+//     res.status(200).json(video);
+//     if (!video) {
+//       return res.status(500).send("Video stream not available");
+//     }
+//   } catch (error) {
+//     console.error("Error downloading video:", error);
+//     res.status(500).send("Error downloading video");
+//   }
+// });
 
-router.route("/download").get(async (req, res) => {
-    const { url } = req.query;  // URL of the YouTube video
+router.route("/download/google-drive").get(async (req, res) => {
+  const { url } = req.query;
+
   if (!url) {
-    return res.status(400).send('Please provide a valid YouTube URL');
+    return res.status(400).send("Please provide a valid YouTube URL");
   }
 
   try {
-    // Call the correct method to download the video
-    const video = await ytdown(url, { format: 'mp4', quality: 'highest' });
-    console.log('Downloaded video object:', video);  // Log the video object to inspect it
-    
-    res.status(200).json(video)
-
-    if (!video || !video.stream) {
-      return res.status(500).send('Video stream not available');
-    }
-
-    // Set the file path for storing the downloaded video
-    const videoFilePath = path.join(__dirname, 'downloads', `${video.title}.mp4`);
-
-    // Create the 'downloads' directory if it doesn't exist
-    if (!fs.existsSync(path.dirname(videoFilePath))) {
-      fs.mkdirSync(path.dirname(videoFilePath), { recursive: true });
-    }
-
-    // Save the video stream to a file
-    const writeStream = fs.createWriteStream(videoFilePath);
-    video.stream.pipe(writeStream);
-
-    // writeStream.on('finish', () => {
-    //   res.status(200).json({
-    //     message: 'Download complete!',
-    //     videoFilePath: videoFilePath
-    //   });
-    // });
-
-    res.status(200).json(video)
-
-    writeStream.on('error', (err) => {
-      console.error('Error during file write:', err);
-      res.status(500).send('Error saving video');
+    const video = await GDLink(url, {
+      format: "mp4",
+      quality: "quality",
     });
-
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
   } catch (error) {
-    console.error('Error downloading video:', error);
-    res.status(500).send('Error downloading video');
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
   }
-  })
+});
+
+router.route("/download/facebook").get(async (req, res) => {
+  const { url } = req.query;
+  const key = "Nayan";
+
+  if (!url) {
+    return res.status(400).send("Please provide a valid YouTube URL");
+  }
+
+  try {
+    const video = await fbdown2(url, key, {
+      format: "mp4",
+      quality: "quality",
+    });
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
+  } catch (error) {
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
+  }
+});
+
+router.route("/download/twitter").get(async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).send("Please provide a valid YouTube URL");
+  }
+
+  try {
+    const video = await twitterdown(url, { format: "mp4", quality: "quality" });
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
+  } catch (error) {
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
+  }
+});
+
+router.route("/download/tiktok").get(async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).send("Please provide a valid YouTube URL");
+  }
+
+  try {
+    const video = await tikdown(url, { format: "mp4", quality: "quality" });
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
+  } catch (error) {
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
+  }
+});
+
+router.route("/download/tiktok").get(async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).send("Please provide a valid YouTube URL");
+  }
+
+  try {
+    const video = await tikdown(url, { format: "mp4", quality: "quality" });
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
+  } catch (error) {
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
+  }
+});
+
+router.route("/download/instagram").get(async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).send("Please provide a valid YouTube URL");
+  }
+
+  try {
+    const video = await instagram(url, { format: "mp4", quality: "quality" });
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
+  } catch (error) {
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
+  }
+});
+
+router.route("/download/youtube").get(async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).send("Please provide a valid YouTube URL");
+  }
+
+  try {
+    const video = await ytdown(url, { format: "mp4", quality: "quality" });
+    res.status(200).json(video);
+    if (!video) {
+      return res.status(500).send("Video stream not available");
+    }
+  } catch (error) {
+    console.error("Error downloading video:", error);
+    res.status(500).send("Error downloading video");
+  }
+});
+
+// router.route("/download/youtube").get(async (req, res) => {
+//   const { url } = req.query; // URL of the YouTube video
+//   if (!url) {
+//     return res.status(400).send("Please provide a valid YouTube URL");
+//   }
+
+//   try {
+//     const video = await ytdown(url, { format: "mp4", quality: "quality" });
+//     console.log("Downloaded video object:", video); // Log the video object to inspect it
+
+//     if (!video) {
+//       return res.status(500).send("Video stream not available");
+//     }
+
+//     const videoFilePath = path.join(
+//       __dirname,
+//       "downloads",
+//       `${video.title}.mp4`
+//     );
+
+//     if (!fs.existsSync(path.dirname(videoFilePath))) {
+//       fs.mkdirSync(path.dirname(videoFilePath), { recursive: true });
+//     }
+
+//     const writeStream = fs.createWriteStream(videoFilePath);
+//     video.stream.pipe(writeStream);
+
+//     writeStream.on("finish", () => {
+//       res.status(200).json({
+//         message: "Download complete!",
+//         videoFilePath: videoFilePath,
+//       });
+//     });
+
+//     writeStream.on("error", (err) => {
+//       console.error("Error during file write:", err);
+//       res.status(500).send("Error saving video");
+//     });
+//   } catch (error) {
+//     console.error("Error downloading video:", error);
+//     res.status(500).send("Error downloading video");
+//   }
+// });
 
 
 
