@@ -2,15 +2,6 @@ const express = require("express");
 let router = express.Router();
 const fs = require("fs");
 const path = require("path");
-// const {
-//   instagram,
-//   tikdown,
-//   twitterdown,
-//   fbdown2,
-//   GDLink,
-//   ytdown,
-//   pintarest,
-// } = require("nayan-video-downloader");
 const {
   instagram,
   tikdown,
@@ -19,7 +10,16 @@ const {
   GDLink,
   ytdown,
   pintarest,
-} = require("nayan-media-downloader");
+} = require("nayan-video-downloader");
+// const {
+//   instagram,
+//   tikdown,
+//   twitterdown,
+//   fbdown2,
+//   GDLink,
+//   ytdown,
+//   pintarest,
+// } = require("nayan-media-downloader");
 
 // router.route("/download/pinterest").get(async (req, res) => {
 //   const { url } = req.query;
