@@ -179,22 +179,16 @@ router.route("/download/youtube").get(async (req, res) => {
     const adio = await fetch(video.data.audio, { method: "HEAD" });
 
     const contentLength = v360p.headers.get("content-length");
-    const sizeInBytes = parseInt(contentLength, 10);
-    const sizeInMB1 = (sizeInBytes / (1024 * 1024)).toFixed(2);
 
     const contentLength1 = v720p.headers.get("content-length");
-    const sizeInBytes2 = parseInt(contentLength1, 10);
-    const sizeInMB2 = (sizeInBytes2 / (1024 * 1024)).toFixed(2);
 
     const contentLength3 = adio.headers.get("content-length");
-    const sizeInBytes3 = parseInt(contentLength3, 10);
-    const sizeInMB3 = (sizeInBytes3 / (1024 * 1024)).toFixed(2);
 
     res.status(200).json({
       video: video,
-      v360p: sizeInMB1,
-      v720p: sizeInMB2,
-      audio: sizeInMB3,
+      v360p: (parseInt(contentLength, 10) / (1024 * 1024)).toFixed(2),
+      v720p: (parseInt(contentLength1, 10) / (1024 * 1024)).toFixed(2),
+      audio: (parseInt(contentLength3, 10) / (1024 * 1024)).toFixed(2),
     });
     if (!video) {
       return res.status(500).send("Video stream not available");
