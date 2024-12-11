@@ -173,7 +173,29 @@ router.route("/download/youtube").get(async (req, res) => {
 
   try {
     const video = await ytdown(url, { format: "mp4", quality: "quality" });
-    res.status(200).json(video);
+
+    const v360p = await fetch(video.data.video, { method: "HEAD" });
+    const v720p = await fetch(video.data.video_hd, { method: "HEAD" });
+    const adio = await fetch(video.data.audio, { method: "HEAD" });
+
+    const contentLength = v360p.headers.get("content-length");
+    const sizeInBytes = parseInt(contentLength, 10);
+    const sizeInMB1 = (sizeInBytes / (1024 * 1024)).toFixed(2);
+
+    const contentLength1 = v720p.headers.get("content-length");
+    const sizeInBytes2 = parseInt(contentLength1, 10);
+    const sizeInMB2 = (sizeInBytes2 / (1024 * 1024)).toFixed(2);
+
+    const contentLength3 = adio.headers.get("content-length");
+    const sizeInBytes3 = parseInt(contentLength3, 10);
+    const sizeInMB3 = (sizeInBytes3 / (1024 * 1024)).toFixed(2);
+
+    res.status(200).json({
+      video: video,
+      v360p: sizeInMB1,
+      v720p: sizeInMB2,
+      audio: sizeInMB3,
+    });
     if (!video) {
       return res.status(500).send("Video stream not available");
     }
@@ -183,155 +205,33 @@ router.route("/download/youtube").get(async (req, res) => {
   }
 });
 
-// router.route("/download/youtube").get(async (req, res) => {
-//   const { url } = req.query; // URL of the YouTube video
-//   if (!url) {
-//     return res.status(400).send("Please provide a valid YouTube URL");
-//   }
+router.route("/download").get(async (req, res) => {
+  try {
+    const videoUrl = req.query.url;
+    const name = req.query.name;
+    const type = req.query.type;
+    const response = await fetch(videoUrl);
 
-//   try {
-//     const video = await ytdown(url, { format: "mp4", quality: "quality" });
-//     console.log("Downloaded video object:", video); // Log the video object to inspect it
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video: ${response.statusText}`);
+    }
 
-//     if (!video) {
-//       return res.status(500).send("Video stream not available");
-//     }
+    const arrayBuffer = await response.arrayBuffer();
+    const videoBuffer = Buffer.from(arrayBuffer);
 
-//     const videoFilePath = path.join(
-//       __dirname,
-//       "downloads",
-//       `${video.title}.mp4`
-//     );
+    // Set headers for the response
+    res.setHeader("Content-Type", type);
+    res.setHeader("Content-Disposition", `attachment; filename=${name}`);
 
-//     if (!fs.existsSync(path.dirname(videoFilePath))) {
-//       fs.mkdirSync(path.dirname(videoFilePath), { recursive: true });
-//     }
+    res.status(200).send(videoBuffer);
+  } catch (error) {
+    console.error("Error fetching or sending video:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the video." });
+  }
+});
 
-//     const writeStream = fs.createWriteStream(videoFilePath);
-//     video.stream.pipe(writeStream);
-
-//     writeStream.on("finish", () => {
-//       res.status(200).json({
-//         message: "Download complete!",
-//         videoFilePath: videoFilePath,
-//       });
-//     });
-
-//     writeStream.on("error", (err) => {
-//       console.error("Error during file write:", err);
-//       res.status(500).send("Error saving video");
-//     });
-//   } catch (error) {
-//     console.error("Error downloading video:", error);
-//     res.status(500).send("Error downloading video");
-//   }
-// });
-
-
-
-
-// router.route("/info").get(async (req, res) => {
-//   try {
-//     if (!ytdl.validateURL(req.query.link)) {
-//       return res.status(400).json({ error: "Invalid YouTube URL" });
-//     }
-
-//     ytdl
-//       .getInfo(req.query.link, options)
-//       .then((info) => {
-//         return res.status(200).json({
-//           videoName: info.videoDetails.title,
-//           videoFormat: info.formats,
-//         });
-//       })
-//       .catch((err) => {
-//         console.error(err);
-//       });
-//   } catch (error) {
-//     if (error.statusCode === 410) {
-//       res.status(410).json({ error: 'The requested video is no longer available.' });
-//     } else {
-//       console.error('An error occurred:', error);
-//       res.status(500).json({ error: 'An error occurred while processing your request.' });
-//     }
-//   }
-// });
-
-// router.route("/download").get(async (req, res) => {
-//   try {
-//     const videoURL = req.query.link;
-//     const videoQuailty = req.query.videoQ;
-//     const audioQuailty = req.query.audioQ;
-
-    
-//     if (!ytdl.validateURL(videoURL)) {
-//       return res.status(400).json({ error: "Invalid YouTube URL" });
-//     }
-
-//     const info = await ytdl.getInfo(videoURL, options);
-//     const videoFormat = ytdl.chooseFormat(info.formats, {
-//       quality: videoQuailty,
-//     });
-//     const audioFormat = ytdl.chooseFormat(info.formats, {
-//       quality: audioQuailty,
-//     });
-
-//     if (!videoFormat || !audioFormat) {
-//       return res
-//         .status(500)
-//         .json({ error: "Video or audio format not available" });
-//     }
-
-//     const videoFile = path.join(__dirname, "temp_video.mp4");
-//     const audioFile = path.join(__dirname, "temp_audio.mp4");
-//     const outputFilePath = path.join(
-//       __dirname,
-//       `${info.videoDetails.title}.mp4`
-//     );
-
-//     const videoStream = ytdl.downloadFromInfo(info, { format: videoFormat });
-//     const audioStream = ytdl.downloadFromInfo(info, { format: audioFormat });
-
-//     const videoPromise = new Promise((resolve, reject) => {
-//       const outputStream = fs.createWriteStream(videoFile);
-//       videoStream.pipe(outputStream);
-//       outputStream.on("finish", resolve);
-//       outputStream.on("error", reject);
-//     });
-
-//     const audioPromise = new Promise((resolve, reject) => {
-//       const outputStream = fs.createWriteStream(audioFile);
-//       audioStream.pipe(outputStream);
-//       outputStream.on("finish", resolve);
-//       outputStream.on("error", reject);
-//     });
-
-//     await Promise.all([videoPromise, audioPromise]);
-
-//     ffmpeg()
-//       .input(videoFile)
-//       .input(audioFile)
-//       .on("start", () => console.log("Starting ffmpeg process..."))
-//       .on("error", (err) => {
-//         console.error("ffmpeg error:", err.message);
-//         res.status(500).json({ error: "Failed to process video" });
-//       })
-//       .on("end", () => {
-//         console.log("File created successfully");
-//         res.download(outputFilePath, (err) => {
-//           if (err) console.error("Download error:", err);
-
-//           fs.unlinkSync(videoFile);
-//           fs.unlinkSync(audioFile);
-//           fs.unlinkSync(outputFilePath);
-//         });
-//       })
-//       .save(outputFilePath);
-//   } catch (err) {
-//     console.error("Download processing error:", err);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
 
   
 

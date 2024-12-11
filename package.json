@@ -11,7 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@blackamda/song_video_dl": "^1.1.0",
     "@distube/ytdl-core": "^4.15.1",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
