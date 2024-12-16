@@ -26,6 +26,7 @@
     "mongoose": "^8.8.0",
     "nayan-media-downloader": "^2.6.4",
     "nayan-video-downloader": "^0.0.8",
+    "node-fetch": "^3.3.2",
     "nodemon": "^3.1.7",
     "w-dwload-dlp": "^1.0.5",
     "youtube-dl-exec": "^3.0.10",
